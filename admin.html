@@ -2,98 +2,160 @@
 <html lang="fa">
 <head>
   <meta charset="UTF-8">
-  <title>مدیریت قیمت</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>پنل مدیریت قیمت</title>
   <style>
     body {
-      font-family: Tahoma;
-      direction: rtl;
-      padding: 20px;
-      background-color: #f0f0f0;
+      font-family: Tahoma, sans-serif;
+      background-color: #f4f7fc;
+      margin: 0;
+      padding: 0;
     }
-    label {
-      display: block;
-      margin-top: 10px;
-    }
-    select, input, button {
-      padding: 8px;
-      margin-top: 5px;
+
+    /* استایل اصلی فرم */
+    .container {
       width: 100%;
-      font-size: 16px;
+      max-width: 800px;
+      margin: 30px auto;
+      background-color: white;
+      border-radius: 10px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+      padding: 30px;
+      text-align: center;
     }
+
+    h2 {
+      font-size: 24px;
+      color: #333;
+      margin-bottom: 20px;
+      font-weight: bold;
+    }
+
+    .input-group {
+      margin-bottom: 20px;
+      text-align: right;
+    }
+
+    label {
+      font-size: 16px;
+      font-weight: bold;
+      color: #555;
+    }
+
+    select, input {
+      width: 100%;
+      padding: 12px;
+      border-radius: 8px;
+      border: 1px solid #ccc;
+      margin-top: 8px;
+      font-size: 16px;
+      background-color: #fafafa;
+    }
+
+    select:focus, input:focus {
+      outline: none;
+      border-color: #4CAF50;
+      background-color: #e8f5e9;
+    }
+
     button {
       background-color: #4CAF50;
       color: white;
       border: none;
+      padding: 15px 30px;
+      font-size: 18px;
+      border-radius: 8px;
       cursor: pointer;
+      margin-top: 20px;
+      transition: all 0.3s ease;
     }
+
     button:hover {
       background-color: #45a049;
     }
+
+    /* پیغام‌های خطا و موفقیت */
     #login-error {
       color: red;
       font-weight: bold;
+      margin-top: 10px;
     }
+
     #message {
-      margin-top: 15px;
       color: green;
       font-weight: bold;
+      margin-top: 15px;
     }
-    .form-container {
-      background-color: white;
-      padding: 20px;
-      border-radius: 10px;
-      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-      width: 300px;
-      margin: 0 auto;
-    }
-    .form-container h2 {
-      text-align: center;
+
+    /* استایل موبایل */
+    @media (max-width: 600px) {
+      .container {
+        padding: 15px;
+      }
+
+      button {
+        width: 100%;
+      }
     }
   </style>
 </head>
 <body>
 
   <!-- فرم ورود ادمین -->
-  <div id="login-section" class="form-container">
+  <div id="login-section" class="container">
     <h2>ورود به پنل مدیریت</h2>
-    <label for="username">نام کاربری:</label>
-    <input type="text" id="username" />
-    <label for="password">رمز عبور:</label>
-    <input type="password" id="password" />
+    <div class="input-group">
+      <label for="username">نام کاربری:</label>
+      <input type="text" id="username" placeholder="نام کاربری خود را وارد کنید" />
+    </div>
+    <div class="input-group">
+      <label for="password">رمز عبور:</label>
+      <input type="password" id="password" placeholder="رمز عبور خود را وارد کنید" />
+    </div>
     <button onclick="login()">ورود</button>
     <p id="login-error"></p>
   </div>
 
   <!-- فرم مدیریت قیمت‌ها -->
-  <div id="admin-section" class="form-container" style="display: none;">
+  <div id="admin-section" class="container" style="display: none;">
     <h2>فرم قیمت‌گذاری</h2>
 
-    <label for="size">سایز لیوان:</label>
-    <select id="size" onchange="updateWalls()">
-      <option value="90">لیوان 90 سی‌سی</option>
-      <option value="110">لیوان 110 سی‌سی</option>
-      <option value="220">لیوان 220 سی‌سی</option>
-      <option value="360">لیوان 360 سی‌سی</option>
-    </select>
+    <div class="input-group">
+      <label for="size">سایز لیوان:</label>
+      <select id="size" onchange="updateWalls()">
+        <option value="90">لیوان 90 سی‌سی</option>
+        <option value="110">لیوان 110 سی‌سی</option>
+        <option value="220">لیوان 220 سی‌سی</option>
+        <option value="360">لیوان 360 سی‌سی</option>
+      </select>
+    </div>
 
-    <label for="wall">نوع جداره:</label>
-    <select id="wall"></select>
+    <div class="input-group">
+      <label for="wall">نوع جداره:</label>
+      <select id="wall"></select>
+    </div>
 
-    <label for="color">تعداد رنگ:</label>
-    <select id="color">
-      <option value="1">تک رنگ</option>
-      <option value="2">دو رنگ</option>
-    </select>
+    <div class="input-group">
+      <label for="color">تعداد رنگ:</label>
+      <select id="color">
+        <option value="1">تک رنگ</option>
+        <option value="2">دو رنگ</option>
+      </select>
+    </div>
 
-    <label for="amount">تیراژ:</label>
-    <select id="amount">
-      <option value="1000">1000</option>
-      <option value="2000">2000</option>
-      <option value="5000">5000</option>
-    </select>
+    <div class="input-group">
+      <label for="amount">تیراژ:</label>
+      <select id="amount">
+        <option value="1000">1000</option>
+        <option value="2000">2000</option>
+        <option value="5000">5000</option>
+      </select>
+    </div>
 
-    <label for="price">قیمت (تومان):</label>
-    <input type="number" id="price" />
+    <div class="input-group">
+      <label for="price">قیمت (تومان):</label>
+      <input type="number" id="price" placeholder="قیمت را وارد کنید" />
+    </div>
 
     <button onclick="savePrice()">ثبت قیمت</button>
 
@@ -101,7 +163,6 @@
   </div>
 
   <script>
-    // تنظیمات و آپدیت‌های مربوط به انتخاب جداره‌ها
     const wallOptions = {
       "90": ["تک جداره"],
       "110": ["تک جداره", "دو جداره", "سه جداره وی آی پی"],
