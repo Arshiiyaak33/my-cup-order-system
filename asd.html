@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="fa">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>سفارش لیوان</title>
+  <style>
+    body { font-family: Tahoma, sans-serif; }
+    .container { width: 50%; margin: 0 auto; padding: 20px; background-color: #f4f7fc; border-radius: 10px; }
+    input, select, button { width: 100%; padding: 10px; margin-bottom: 10px; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h2>سفارش لیوان</h2>
+    <label for="size">سایز لیوان:</label>
+    <select id="size">
+      <option value="90">لیوان 90 سی‌سی</option>
+      <option value="110">لیوان 110 سی‌سی</option>
+      <option value="220">لیوان 220 سی‌سی</option>
+      <option value="360">لیوان 360 سی‌سی</option>
+    </select>
+
+    <label for="wall">نوع جداره:</label>
+    <select id="wall">
+      <option value="تک جداره">تک جداره</option>
+      <option value="دو جداره">دو جداره</option>
+      <option value="سه جداره وی آی پی">سه جداره وی آی پی</option>
+    </select>
+
+    <label for="color">تعداد رنگ:</label>
+    <select id="color">
+      <option value="1">تک رنگ</option>
+      <option value="2">دو رنگ</option>
+    </select>
+
+    <label for="amount">تیراژ:</label>
+    <select id="amount">
+      <option value="1000">1000</option>
+      <option value="2000">2000</option>
+      <option value="5000">5000</option>
+    </select>
+
+    <label for="totalPrice">قیمت کل:</label>
+    <input type="text" id="totalPrice" readonly>
+
+    <button onclick="calculatePrice()">محاسبه قیمت</button>
+  </div>
+
+  <script>
+    function calculatePrice() {
+      const size = document.getElementById("size").value;
+      const wall = document.getElementById("wall").value;
+      const color = document.getElementById("color").value;
+      const amount = document.getElementById("amount").value;
+
+      const priceData = JSON.parse(localStorage.getItem("cupPrice"));
+      if (priceData) {
+        let price = priceData.price;
+        price = price * amount;
+        document.getElementById("totalPrice").value = price;
+      } else {
+        alert("قیمت‌ها هنوز تنظیم نشده‌اند!");
+      }
+    }
+  </script>
+</body>
+</html>
