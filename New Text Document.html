@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="fa">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>محیط کاربر - ثبت سفارش لیوان</title>
+  <style>
+    body { font-family: sans-serif; direction: rtl; padding: 20px; background: #f7f7f7; color: #333; }
+    .container { max-width: 500px; margin: auto; background: white; padding: 20px; border-radius: 15px; box-shadow: 0 0 15px rgba(0,0,0,0.1); }
+    select, button { width: 100%; padding: 10px; margin: 5px 0; border-radius: 10px; border: 1px solid #ccc; font-size: 16px; }
+    button { background-color: #28a745; color: white; border: none; cursor: pointer; }
+    button:hover { background-color: #218838; }
+    ul { list-style: none; padding: 0; }
+    li { padding: 8px; border-bottom: 1px solid #ddd; display: flex; justify-content: space-between; flex-wrap: wrap; }
+    .total { margin-top: 10px; font-weight: bold; font-size: 18px; }
+    .wall-container { display: none; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h2>ثبت سفارش لیوان</h2>
+    <label for="cupSize">انتخاب سایز لیوان:</label>
+    <select id="cupSize">
+      <option value="">-- انتخاب کنید --</option>
+      <option value="90">لیوان 90 سی‌سی</option>
+      <option value="110">لیوان 110 سی‌سی</option>
+      <option value="220">لیوان 220 سی‌سی</option>
+      <option value="360">لیوان 360 سی‌سی</option>
+    </select>
+
+    <div class="wall-container">
+      <label for="cupWall">انتخاب نوع جداره:</label>
+      <select id="cupWall"></select>
+    </div>
+
+    <label for="colorCount">تعداد رنگ:</label>
+    <select id="colorCount">
+      <option value="تک رنگ">تک رنگ</option>
+      <option value="دو رنگ">دو رنگ</option>
+    </select>
+
+    <label for="batchSize">تیراژ:</label>
+    <select id="batchSize">
+      <option value="1000">1000 تایی</option>
+      <option value="2000">2000 تایی</option>
+      <option value="5000">5000 تایی</option>
+    </select>
+
+    <button id="addBtn">افزودن به سفارش</button>
+
+    <ul id="orderList"></ul>
+    <div class="total">مجموع کل: <span id="total">۰</span> تومان</div>
+  </div>
+
+  <script>
+    (function() {
+      const cupOptions = {
+        "90": ["تک جداره"],
+        "110": ["تک جداره", "دو جداره", "سه جداره وی آی پی"],
+        "220": ["تک جداره", "دو جداره", "سه جداره وی آی پی"],
+        "360": ["دو جداره", "سه جداره وی آی پی"]
+      };
+
+      let orders = JSON.parse(localStorage.getItem('orders')) || [];
+
+      function init() {
+        const sizeSelect = document.getElementById('cupSize');
+        sizeSelect.addEventListener('change', handleSizeChange);
+        document.getElementById('addBtn').addEventListener('click', addOrder);
+        renderOrders();
+      }
+
+      function handleSizeChange() {
+        const size = document.getElementById('cupSize').value;
+        const wallContainer = document.querySelector('.wall-container');
+        const wallSelect = document.getElementById('cupWall');
+        wallSelect.innerHTML = '';
+        if (size && cupOptions[size]) {
+          // نمایش کانتینر جداره
+          wallContainer.style.display = 'block';
+          // پر کردن گزینه‌های جداره
+          cupOptions[size].forEach(wall => {
+            const opt = document.createElement('option');
+            opt.value = wall;
+            opt.textContent = wall;
+            wallSelect.appendChild(opt);
+          });
+        } else {
+          wallContainer.style.display = 'none';
+        }
+      }
+
+      function getPrice(size, wall) {
+        const prices = JSON.parse(localStorage.getItem('prices') || '{}');
+        return prices[`${size}|${wall}`] || 0;
+      }
+
+      function addOrder() {
+        const size = document.getElementById('cupSize').value;
+        const wall = document.getElementById('cupWall') ? document.getElementById('cupWall').value : '';
+        const color = document.getElementById('colorCount').value;
+        const batchSize = parseInt(document.getElementById('batchSize').value);
+        if (!size || !wall || !batchSize) return;
+        orders.push({ size, wall, color, batchSize });
+        localStorage.setItem('orders', JSON.stringify(orders));
+        renderOrders();
+      }
+
+      function removeOrder(index) {
+        orders.splice(index, 1);
+        localStorage.setItem('orders', JSON.stringify(orders));
+        renderOrders();
+      }
+
+      function renderOrders() {
+        const list = document.getElementById('orderList');
+        const totalEl = document.getElementById('total');
+        list.innerHTML = '';
+        let total = 0;
+        orders.forEach((order, idx) => {
+          const price = getPrice(order.size, order.wall);
+          const sum = price * order.batchSize;
+          total += sum;
+          const li = document.createElement('li');
+          li.innerHTML = `
+            <span>
+              لیوان ${order.size} سی‌سی - ${order.wall} - ${order.color} - ${order.batchSize.toLocaleString()} عدد
+              = ${sum.toLocaleString()} تومان
+            </span>
+            <button onclick="removeOrder(${idx})">حذف</button>
+          `;
+          list.appendChild(li);
+        });
+        totalEl.textContent = total.toLocaleString();
+      }
+
+      // اجرای init پس از بارگذاری DOM
+      if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', init);
+      } else {
+        init();
+      }
+    })();
+  </script>
+</body>
+</html>
